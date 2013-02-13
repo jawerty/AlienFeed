@@ -17,46 +17,61 @@ $ python setup.py install
 
 ## Usage
 
-There are several different ways functions that are built into AlienFeed.
+There are several different functions that are built into AlienFeed.
 See `$ alienfeed -h` for help
 
 
 Here you can return a default list of the 10 top r/pics submissions.
 
-`$ alienfeed pics`
+```
+$ alienfeed pics
+```
 
 The output should look similar to the picture below.
 
 ![Alt text](/public/pic1.png)
 
-You can also limit the amount of submissions returned by using the '-l or --limit' arguments. If you want a feed that returns a longer list than 10, then you would use this argument.
+You can also limit the amount of submissions returned by using the '-l or --limit' arguments. If you want a feed that returns a longer list than 10, then you would use this argument. 
 
-```$ alienfeed pics -l 2```
+```
+$ alienfeed pics -l 2
+```
 
+The output is below
 ![Alt text](/public/pic3.png)
 
 
-Longer than 10
+If you want to return a list of submissons longer than 10
 
-```$ alienfeed pics -l 20```
+```
+$ alienfeed pics -l 20
+```
 
 ![Alt text](/public/pic4.png)
 
 If you want to open up a link, use the '-o or --open' arguments. 
 
-```$ alienfeed pics -o 3```
+```
+$ alienfeed pics -o 3
+```
 
 ***hint: If you want to open a link larger than ten, you must use the limit argument***
 
+Below is the link that popped up when I ran the previous command.
+
 ![Alt text](/public/pic2.png)
 
-To open a link that is the 11th most popular.
+If you want to open a link that is the 11th most popular.
 
-```$ alienfeed funny -o 11```
+```
+$ alienfeed funny -o 11 -l 11
+```
 
 The random function opens up a random link from the requested subreddit. Use the optional argument '-r or --random'.
 
-```$ alienfeed wtf -r```
+```
+$ alienfeed wtf -r
+```
 
 ## Contact
 If you would like to contact me for further information on the project, see the info below.
