@@ -22,28 +22,38 @@ See `$ alienfeed -h` for help
 
 
 Here you can return a default list of the 10 top r/pics submissions.
+
 `$ alienfeed pics`
 
 The output should look similar to the picture below.
+
 ![Alt text](/public/pic1.png)
 
 You can also limit the amount of submissions returned by using the '-l or --limit' arguments. If you want a feed that returns a longer list than 10, then you would use this argument.
+
 `$ alienfeed pics -l 2`
+
 ![Alt text](/public/pic2.png)
 
 Longer than 10
+
 `$ alienfeed pics -l 20`
+
 ![Alt text](/public/pic3.png)
 
 If you want to open up a link, use the '-o or --open' arguments. 
 `$ alienfeed pics -o 3`
+
 ***hint: If you want to open a link larger than ten, you must use the limit argument***
+
 ![Alt text](/public/pic4.png)
 
 To open a link that is the 11th most popular.
+
 `$ alienfeed funny -o 11`
 
 The random function opens up a random link from the requested subreddit. Use the optional argument '-r or --random'.
+
 `$ alienfeed wtf -r`
 
 ## Contact
