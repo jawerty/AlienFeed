@@ -1,6 +1,8 @@
 # AlienFeed
-AlienFeed is a commandline application made for displaying
+AlienFeed is a command line application made for displaying
 and interacting with Reddit submissions. You can return a list containing the top submissions in a subreddit, and even open the links up if you'd like. I do not have any affiliation with Reddit; I made this to be a fun utilization of the Reddit API.
+
+When using this tool, understand that it utilizes the Reddit API with praw (Python Reddit API Wrapper) and has a limit on the amount of requests that are sent to the server. So if the applcation is taking a very long time or you cannot make a request is might not have to do with the application in itself, just the limited requests.
 
 ## Install Instructions
 To download and install AlienFeed all you need to do is get a copy of this distribution
@@ -57,9 +59,9 @@ If you want to open up a link, use the '-o or --open' arguments. An example is b
 $ alienfeed pics -o 3
 ```
 
-***hint: If you want to open a link larger than ten, you must use the limit argument***
+***hint: If you want to open a link larger than ten, you must use the limit argument, which is -l and --limit***
 
-Below is the link that popped up when I ran the previous command.
+Below is the link that popped up when I ran the previous command. (enjoy the cute dog)
 
 ![Alt text](/public/pic2.png)
 
@@ -69,7 +71,7 @@ If you want to open a link that is the 11th most popular. You would have to run 
 $ alienfeed funny -o 11 -l 11
 ```
 
-The random function opens up a random link from the requested subreddit in a new browser tab (similar to the --open argument). Use the optional argument '-r or --random'. Example below.
+The random function opens up a random link from the requested subreddit in a new browser tab (similar to the --open argument). Use the optional argument '-r or --random'. Example using the r/wtf subreddit.
 
 ```
 $ alienfeed wtf -r

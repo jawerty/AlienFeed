@@ -25,7 +25,7 @@ class _parser(argparse.ArgumentParser):
 	
 def main():
 	x = 1
-	r = praw.Reddit(user_agent='AlienFeed by u/jw989 as seen on Github http://github.com/jawerty/AlienFeed')
+	r = praw.Reddit(user_agent='AlienFeed v0.1.0 by u/jw989 as seen on Github http://github.com/jawerty/AlienFeed')
 		
 	parser = _parser(description='''AlienFeed, by Jared Wright, is a commandline application made for displaying and interacting with recent Reddit links. I DO NOT HAVE ANY AFILIATION WITH REDDIT, I AM JUST A HACKER''')
 		
