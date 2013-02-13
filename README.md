@@ -38,6 +38,8 @@ $ alienfeed pics -l 2
 ```
 
 The output is below
+
+
 ![Alt text](/public/pic3.png)
 
 
