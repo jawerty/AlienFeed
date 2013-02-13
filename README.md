@@ -18,7 +18,7 @@ $ python setup.py install
 ## Usage
 
 There are several different functions that are built into AlienFeed.
-See `$ alienfeed -h` for help
+See `$ alienfeed -h` for help.
 
 
 Here you can return a default list of the 10 top r/pics submissions.
@@ -43,7 +43,7 @@ The output is below
 ![Alt text](/public/pic3.png)
 
 
-If you want to return a list of submissons longer than 10
+If you want to return a list of submissons longer than 10, then you would run the command below.
 
 ```
 $ alienfeed pics -l 20
@@ -51,7 +51,7 @@ $ alienfeed pics -l 20
 
 ![Alt text](/public/pic4.png)
 
-If you want to open up a link, use the '-o or --open' arguments. 
+If you want to open up a link, use the '-o or --open' arguments. An example is below.
 
 ```
 $ alienfeed pics -o 3
@@ -63,17 +63,19 @@ Below is the link that popped up when I ran the previous command.
 
 ![Alt text](/public/pic2.png)
 
-If you want to open a link that is the 11th most popular.
+If you want to open a link that is the 11th most popular. You would have to run the command below. Note that the command is comprised of two different optional arguments, one -o and one -l.
 
 ```
 $ alienfeed funny -o 11 -l 11
 ```
 
-The random function opens up a random link from the requested subreddit. Use the optional argument '-r or --random'.
+The random function opens up a random link from the requested subreddit in a new browser tab (similar to the --open argument). Use the optional argument '-r or --random'. Example below.
 
 ```
 $ alienfeed wtf -r
 ```
+This command would of course open up the link in a new browser tab.
+
 
 ## Contact
 If you would like to contact me for further information on the project, see the info below.
