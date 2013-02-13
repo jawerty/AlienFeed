@@ -82,6 +82,9 @@ This command would of course open up the link in a new browser tab.
 If you would like to contact me for further information on the project, see the info below.
 
 Email: jawerty210@gmail.com
+
 Github: jawerty
+
 Twitter: @jawerty
+
 Blog: <http://wrightdev.herokuapp.com>
