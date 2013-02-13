@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='AlienFeed',
-      version='0.1.0',
+      version='0.1.1',
       description='AlienFeed is a command line application made for displaying and interacting with Reddit submissions.',
       author='Jared Wright',
       license='LICENSE',
