@@ -109,18 +109,18 @@ def main():
 							x += 1
 					except ValueError:
 						print color.FAIL, "I'm sorry but the subreddit '",args.subreddit,"' does not exist; try again.", color.ENDC
-	elif args.open:
-		try:
-			if args.random:
-		   		print color.WARNING, "You cannot use [-o OPEN] with [-r RANDOM]", color.ENDC
-			else:
-				webbrowser.open(temp[args.open])
-				print '\n\nviewing submission\n\n'
-		except KeyError, e:
-			print color.FAIL, '\n\nKeyError: ', e
-			print color.WARNING,"The number you typed in was out of the feed's range (try to pick a number between 1-10 or add '--limit", e, "')\n", color.ENDC
-	else:
-		print "No arguments made"
+		if args.open:
+			try:
+				if args.random:
+			   		print color.WARNING, "You cannot use [-o OPEN] with [-r RANDOM]", color.ENDC
+				else:
+					webbrowser.open(temp[args.open])
+					print '\n\nviewing submission\n\n'
+			except KeyError, e:
+				print color.FAIL, '\n\nKeyError: ', e
+				print color.WARNING,"The number you typed in was out of the feed's range (try to pick a number between 1-10 or add '--limit", e, "')\n", color.ENDC
+		else:
+			print "No arguments made"
 
 if __name__ == '__main__':
 	main()
