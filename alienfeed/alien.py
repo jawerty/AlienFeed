@@ -5,7 +5,9 @@ import random
 import argparse
 import praw
 import webbrowser
-
+ 
+r = praw.Reddit(user_agent='AlienFeed v0.1.0 by u/jw989 as seen on Github http://github.com/jawerty/AlienFeed')
+ 
 class terminal_colors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -14,113 +16,84 @@ class terminal_colors:
     FAIL = '\033[91m'
     ENDC = '\033[0m'
 color = terminal_colors()
-
+ 
 class _parser(argparse.ArgumentParser):
     def error(self, message):
         sys.stderr.write(color.FAIL + '\nAlienFeed error: %s\n\n' % message + color.ENDC)
         self.print_help()
         sys.exit(2)
-
-r = praw.Reddit(user_agent='AlienFeed v0.1.0 by u/jw989 as seen on Github http://github.com/jawerty/AlienFeed')
-parser = _parser(description='''AlienFeed, by Jared Wright, is a commandline application made for displaying and interacting with recent Reddit links. I DO NOT HAVE ANY AFILIATION WITH REDDIT, I AM JUST A HACKER''')
-parser.add_argument("-l", "--limit", type=int, help='Limits output (default output is 10 links)')
-parser.add_argument("subreddit", help='Returns top links from subreddit \'front\' returns the front page')
-parser.add_argument("-o", "--open", type=int, help='Opens one link that matches the number inputted. Chosen by number')
-parser.add_argument("-r", "--random", action='store_true', help='Opens a random link (must be the only optional argument)')
-
-if len(sys.argv)==1:
-    parser.print_help()
-    sys.exit(1)
-args=parser.parse_args()
+ 
+def subreddit_viewer(generator):
+    try:
+        links = submission_getter(generator, verbose=True)
+    except ValueError:
+        print color.FAIL, "I'm sorry but the subreddit '",args.subreddit,"' does not exist; try again.", color.ENDC
+ 
+def submission_getter(generator, memo=[], verbose=False):
+    for x, link in enumerate(generator):
+        memo.append(link.url)
+        if verbose:
+            print '\n', color.OKGREEN, x+1, '->', color.OKBLUE, link, color.ENDC
+    return memo
+ 
+def print_colorized(text):
+    print color.HEADER, text, color.ENDC
+    
+def print_warning(text, exc=None, exc_details=None):    
+    if exc and exc_details:
+        print color.FAIL, exc, exc_details
+    print color.WARNING, text , color.ENDC
 
 def main():
-	temp = {}
-	x = 1
+    parser = _parser(description='''AlienFeed, by Jared Wright, is a commandline application made for displaying and interacting with recent Reddit links. I DO NOT HAVE ANY AFILIATION WITH REDDIT, I AM JUST A HACKER''')    
+    parser.add_argument("-l", "--limit", type=int, default=10,          help='Limits output (default output is 10 links)')
+    parser.add_argument("subreddit",               default='front',     help='Returns top links from subreddit \'front\' returns the front page')
+    parser.add_argument("-o", "--open",  type=int,                      help='Opens one link that matches the number inputted. Chosen by number')
+    parser.add_argument("-r", "--random",          action='store_true', help='Opens a random link (must be the only optional argument)')
+    if len(sys.argv)==1:
+        parser.print_help()
+        sys.exit(1)
+    args=parser.parse_args()        
+    if args.open and args.random:
+        print_warning("You cannot use [-o OPEN] with [-r RANDOM]")
+        sys.exit(1)  
 
-	if args.subreddit:
-		if args.random and not args.limit:
-			links = {}
-			random_int = random.randint(0,300)
-			x = 1
-			top = r.get_subreddit(args.subreddit).get_top(limit=200)
-			new = r.get_subreddit(args.subreddit).get_new(limit=200)
-			hot = r.get_subreddit(args.subreddit).get_hot(limit=200)
-
-			for link in top:
-				links[x] = link
-				x += 1
-			for link in new:
-				links[x] = link
-				x += 1
-			for link in hot:
-				links[x] = link
-				x += 1
-			try:
-				webbrowser.open(links[random_int].url)
-				print color.HEADER, "\n\nviewing a random submission\n\n", color.ENDC
-			except KeyError, e:
-				print color.FAIL, '\n\nKeyError: ', e
-				print color.WARNING,"There was an error with your input. Hint: Perhaps the subreddit you chose was too small to run through the program", color.ENDC
-		elif args.random and args.limit:
-			print color.WARNING, "You cannot use [-l LIMIT] with [-r RANDOM]", color.ENDC	
-		else:			
-			if args.subreddit == 'front':
-				if args.limit:
-					links = r.get_front_page(limit=args.limit)
-
-					print color.HEADER, '\nTop', args.limit, 'front page links:', color.ENDC
-						
-					for link in links:
-						temp[x] = link.url
-						print '\n', color.OKGREEN, x,'->', color.OKBLUE, link, color.ENDC
-						x += 1
-						
-				else:
-					links = r.get_front_page()
-
-					print color.HEADER, '\nTop 25 front page links:', color.ENDC
-
-					for link in links:
-						temp[x] = link.url
-						print '\n', color.OKGREEN, x,'->', color.OKBLUE, link, color.ENDC
-						x += 1
-			else:	
-				if args.limit:
-					links = r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
-
-					print color.HEADER, '\nTop', args.limit, 'r/' + args.subreddit + ' links:', color.ENDC
-						
-					try:
-						for link in links:
-							temp[x] = link.url
-							print '\n', color.OKGREEN, x,'->', color.OKBLUE, link, color.ENDC
-							x += 1
-					except ValueError:
-						print color.FAIL, "I'm sorry but the subreddit '",args.subreddit,"' does not exist; try again.", color.ENDC
-				else:
-					links = r.get_subreddit(args.subreddit).get_hot(limit=10)
-
-					print color.HEADER, '\nTop 10 r/' + args.subreddit + ' links:', color.ENDC
-						
-					try:
-						for link in links:
-							temp[x] = link.url
-							print '\n', color.OKGREEN, x,'->', color.OKBLUE, link, color.ENDC
-							x += 1
-					except ValueError:
-						print color.FAIL, "I'm sorry but the subreddit '",args.subreddit,"' does not exist; try again.", color.ENDC
-		if args.open:
-			try:
-				if args.random:
-			   		print color.WARNING, "You cannot use [-o OPEN] with [-r RANDOM]", color.ENDC
-				else:
-					webbrowser.open(temp[args.open])
-					print '\n\nviewing submission\n\n'
-			except KeyError, e:
-				print color.FAIL, '\n\nKeyError: ', e
-				print color.WARNING,"The number you typed in was out of the feed's range (try to pick a number between 1-10 or add '--limit", e, "')\n", color.ENDC
-		else:
-			print "No arguments made"
+    if args.random:
+	    if args.limit == 10:
+	    	if args.subreddit == 'front':
+	            front = r.get_front_page(limit=200)
+	            links = submission_getter(front)
+	        else:
+	            top = r.get_subreddit(args.subreddit).get_top(limit=200)
+	            new = r.get_subreddit(args.subreddit).get_new(limit=200)
+	            hot = r.get_subreddit(args.subreddit).get_hot(limit=200)
+	            links = submission_getter(top)
+	            links = submission_getter(new, links)
+	            links = submission_getter(hot, links)                    
+	        try:
+	            webbrowser.open( random.choice(links) )
+	            print_colorized("\n\nviewing a random submission\n\n")
+	        except KeyError, e:
+	            print_warning("There was an error with your input. Hint: Perhaps the subreddit you chose was too small to run through the program", '\n\nKeyError: ',e)    
+	    else:
+	        print_warning("You cannot use [-l LIMIT] with [-r RANDOM] (unless the limit is 10)")
+        	sys.exit(1)
+    elif args.open:
+        try:
+           subr = r.get_subreddit(args.subreddit).get_top(limit=args.limit)
+           links = submission_getter(subr)
+           webbrowser.open( links[args.open + 1] )
+           print '\n\nviewing submission\n\n'
+        except KeyError, e:
+           print_warning("The number you typed in was out of the feed's range (try to pick a number between 1-10 or add '--limit {0}".format(e)  ,'\n\nKeyError: ',e)
+    else:
+        if args.subreddit == 'front':
+            subm_gen = r.get_front_page(limit=args.limit)
+            print_colorized('\nTop {0} front page links:'.format(args.limit))
+        else:
+            subm_gen = r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
+            print_colorized('\nTop {0} r/{1} links:'.format(args.limit, args.subreddit) )
+        subreddit_viewer(subm_gen)    
 
 if __name__ == '__main__':
 	main()
