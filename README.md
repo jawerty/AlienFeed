@@ -7,7 +7,9 @@ When using this tool, understand that it utilizes the Reddit API with praw (Pyth
 To download and install AlienFeed all you need to do is get a copy of this distribution
 
 ### Install via PIP
-`$ pip install alienfeed`
+```
+$ pip install alienfeed
+```
 
 ###Install via setup.py 
 Download this zip or clone it to your local machine. Then run the following commands to install AlienFeed.
