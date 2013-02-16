@@ -1,1 +1,7 @@
-Making it look at little bit nicer
+2012-2-15
+
+* Restructure code to look pretty
+
+2012-2-15
+
+* Code overhall and complete modularization of code (help from dmarx)
