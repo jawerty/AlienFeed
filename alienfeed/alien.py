@@ -6,7 +6,7 @@ import argparse
 import praw
 import webbrowser
  
-r = praw.Reddit(user_agent='AlienFeed v0.1.0 by u/jw989 as seen on Github http://github.com/jawerty/AlienFeed')
+r = praw.Reddit(user_agent='AlienFeed v0.2.2 by u/jw989 as seen on Github http://github.com/jawerty/AlienFeed')
  
 class terminal_colors:
     HEADER = '\033[95m'
@@ -78,6 +78,7 @@ def main():
 	    else:
 	        print_warning("You cannot use [-l LIMIT] with [-r RANDOM] (unless the limit is 10)")
         	sys.exit(1)
+
     elif args.open:
         try:
            subr = r.get_subreddit(args.subreddit).get_top(limit=args.limit)
@@ -86,6 +87,7 @@ def main():
            print '\n\nviewing submission\n\n'
         except KeyError, e:
            print_warning("The number you typed in was out of the feed's range (try to pick a number between 1-10 or add '--limit {0}".format(e)  ,'\n\nKeyError: ',e)
+    
     else:
         if args.subreddit == 'front':
             subm_gen = r.get_front_page(limit=args.limit)
