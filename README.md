@@ -23,7 +23,6 @@ $ python setup.py install
 There are several different functions that are built into AlienFeed.
 See `$ alienfeed -h` for help.
 
-
 Here you can return a default list of the 10 top r/pics submissions.
 
 ```
