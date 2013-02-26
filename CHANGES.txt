@@ -5,3 +5,7 @@
 2012-2-15
 
 * Code overhall and complete modularization of code (help from dmarx)
+
+2012-2-25
+
+* Fixed --open bugs (opened link two submissions above)
