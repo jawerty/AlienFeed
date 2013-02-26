@@ -5,12 +5,14 @@ AlienFeed is a command line application made for displaying and interacting with
 To download and install AlienFeed, all you need to do is get a copy of this distribution
 
 ### Install via PIP
+
 ```
 $ pip install alienfeed
 ```
 
 ###Install via setup.py 
 Download this zip or clone it to your local machine. Then run the following commands to install AlienFeed.
+
 ```
 $ cd /path/to/alienfeed
 $ python setup.py install
@@ -20,7 +22,6 @@ $ python setup.py install
 
 There are several different functions that are built into AlienFeed.
 See `$ alienfeed -h` for help.
-
 
 Here you can return a default list of the 10 top r/pics submissions.
 
@@ -75,6 +76,7 @@ The random function opens up a random link from the requested subreddit in a new
 ```
 $ alienfeed wtf -r
 ```
+
 This command would of course open up the link in a new browser tab.
 
 
