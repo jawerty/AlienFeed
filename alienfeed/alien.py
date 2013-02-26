@@ -81,7 +81,7 @@ def main():
 
     elif args.open:
         try:
-           subr = r.get_subreddit(args.subreddit).get_top(limit=args.limit)
+           subr = r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
            links = submission_getter(subr)
            webbrowser.open( links[args.open + 1] )
            print '\n\nviewing submission\n\n'
