@@ -83,7 +83,7 @@ def main():
         try:
            subr = r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
            links = submission_getter(subr)
-           webbrowser.open( links[args.open + 1] )
+           webbrowser.open( links[args.open - 1] )
            print '\n\nviewing submission\n\n'
         except KeyError, e:
            print_warning("The number you typed in was out of the feed's range (try to pick a number between 1-10 or add '--limit {0}".format(e)  ,'\n\nKeyError: ',e)
