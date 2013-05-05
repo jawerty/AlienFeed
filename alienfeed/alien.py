@@ -6,7 +6,7 @@ import argparse
 import praw
 import webbrowser
  
-r = praw.Reddit(user_agent='AlienFeed v0.2.2 by u/jw989 as seen on Github http://github.com/jawerty/AlienFeed')
+r = praw.Reddit(user_agent='AlienFeed v0.2.2 by u/jw989 seen on Github http://github.com/jawerty/AlienFeed')
  
 class terminal_colors:
     HEADER = '\033[95m'
@@ -15,6 +15,7 @@ class terminal_colors:
     WARNING = '\033[93m'
     FAIL = '\033[91m'
     ENDC = '\033[0m'
+    
 color = terminal_colors()
  
 class _parser(argparse.ArgumentParser):
@@ -75,6 +76,7 @@ def main():
 	            print_colorized("\n\nviewing a random submission\n\n")
 	        except KeyError, e:
 	            print_warning("There was an error with your input. Hint: Perhaps the subreddit you chose was too small to run through the program", '\n\nKeyError: ',e)    
+	    
 	    else:
 	        print_warning("You cannot use [-l LIMIT] with [-r RANDOM] (unless the limit is 10)")
         	sys.exit(1)
@@ -95,6 +97,7 @@ def main():
         else:
             subm_gen = r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
             print_colorized('\nTop {0} r/{1} links:'.format(args.limit, args.subreddit) )
+            
         subreddit_viewer(subm_gen)    
 
 if __name__ == '__main__':
