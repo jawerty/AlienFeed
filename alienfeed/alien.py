@@ -36,7 +36,11 @@ def submission_getter(generator, memo=[], verbose=False):
     for x, link in enumerate(generator):
         memo.append(link.url)
         if verbose:
-            print '\n', color.OKGREEN, x + 1, '->', color.OKBLUE, link, color.ENDC
+	    if link.over_18:
+		print '\n', color.OKGREEN, x + 1, '->', color.OKBLUE, \
+		link, color.FAIL, '[NSFW]', color.ENDC
+            else:
+		print '\n', color.OKGREEN, x + 1, '->', color.OKBLUE, link, color.ENDC
     return memo
  
 def print_colorized(text):
