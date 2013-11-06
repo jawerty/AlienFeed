@@ -5,9 +5,9 @@ import random
 import argparse
 import praw
 import webbrowser
- 
+from subprocess import call
 
-USER_AGENT = 'AlienFeed v0.2.9 by u/jw989 seen on ' \
+USER_AGENT = 'AlienFeed v0.3.0 by u/jw989 seen on ' \
 	     'Github http://github.com/jawerty/AlienFeed'
 
 r = praw.Reddit(user_agent=USER_AGENT)
@@ -64,10 +64,14 @@ def main():
 			help='Opens one link that matches the number inputted. Chosen by number')
     parser.add_argument("-r", "--random",          action='store_true',
 			help='Opens a random link (must be the only optional argument)')
+    parser.add_argument("-U", "--update",          action='store_true',
+            help='Automatically updates AlienFeed via pip')
+
     if len(sys.argv)==1:
         parser.print_help()
         sys.exit(1)
-    args=parser.parse_args()        
+    args=parser.parse_args()    
+
     if args.open and args.random:
         print_warning("You cannot use [-o OPEN] with [-r RANDOM]")
         sys.exit(1)  
@@ -117,12 +121,19 @@ def main():
             subm_gen = r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
             print_colorized('\nTop {0} /r/{1} links:'.format(args.limit,
 							     args.subreddit) )
-            
+
 	try:
 	    subreddit_viewer(subm_gen)
 	except praw.errors.InvalidSubreddit:
 	    print color.FAIL, "I'm sorry but the subreddit '", args.subreddit, \
 		"' does not exist; try again.", color.ENDC
+
+    if args.update == True:
+        try:
+            print "Upgrading AlienFeed..."
+            call(['pip', 'install', 'alienfeed', '--upgrade', '--quiet'])
+        except OSError, e:
+            print_warning("You cannot use -U without having pip installed.")
 
 if __name__ == '__main__':
 	main()

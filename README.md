@@ -79,6 +79,10 @@ $ alienfeed wtf -r
 
 This command would of course open up the link in a new browser tab.
 
+To upgrade alienfeed via pip, you would need to call this argument, '-U'
+```
+$alienfeed funny -U
+```
 
 ## Contact
 If you would like to contact me for further information on the project, see the info below.
