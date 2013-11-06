@@ -6,8 +6,12 @@ import argparse
 import praw
 import webbrowser
  
-r = praw.Reddit(user_agent='AlienFeed v0.2.8 by u/jw989 seen on Github http://github.com/jawerty/AlienFeed')
- 
+
+USER_AGENT = 'AlienFeed v0.2.8 by u/jw989 seen on ' \
+	     'Github http://github.com/jawerty/AlienFeed'
+
+r = praw.Reddit(user_agent=USER_AGENT)
+
 class terminal_colors(object):
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -20,7 +24,8 @@ color = terminal_colors()
  
 class _parser(argparse.ArgumentParser):
     def error(self, message):
-        sys.stderr.write(color.FAIL + '\nAlienFeed error: %s\n\n' % message + color.ENDC)
+        sys.stderr.write(color.FAIL + '\nAlienFeed error: %s\n\n' %
+			 (message + color.ENDC))
         self.print_help()
         sys.exit(2)
  
@@ -28,7 +33,8 @@ def subreddit_viewer(generator):
     try:
         links = submission_getter(generator, verbose=True)
     except ValueError:
-        print color.FAIL, "I'm sorry but the subreddit '",args.subreddit,"' does not exist; try again.", color.ENDC
+        print color.FAIL, "I'm sorry but the subreddit '", args.subreddit, \
+	"' does not exist; try again.", color.ENDC
  
 def submission_getter(generator, memo=[], verbose=False):
     for x, link in enumerate(generator):
