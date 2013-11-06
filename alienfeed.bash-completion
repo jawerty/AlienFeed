@@ -1,0 +1,27 @@
+#bash completion for alienfeed
+
+_alienfeed()
+{
+    #defining local vars
+    local cur prev words cword
+    #_init_completion || return #requires bash-completion >= 2.0
+
+    COMPREPLY=() #clean out last completions
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    COMMANDS="subreddit"
+    OPTS="-h --help -l --limit -r --random"
+
+    case "${cur}" in
+        -*)
+            completions="$OPTS"
+            ;;
+        *)
+            completions="$COMMANDS"
+            ;;
+    esac
+
+    COMPREPLY=( $( compgen -W "$completions" -- $cur ))
+} &&
+complete -F _alienfeed alienfeed
