@@ -32,7 +32,7 @@ class _parser(argparse.ArgumentParser):
 def subreddit_viewer(generator):
     try:
         links = submission_getter(generator, verbose=True)
-    except ValueError:
+    except ValueError, praw.errors.InvalidSubreddit:
         print color.FAIL, "I'm sorry but the subreddit '", args.subreddit, \
 	"' does not exist; try again.", color.ENDC
  
