@@ -4,6 +4,7 @@ import sys
 import random
 import argparse
 import praw
+import praw.errors
 import webbrowser
  
 
@@ -30,11 +31,7 @@ class _parser(argparse.ArgumentParser):
         sys.exit(2)
  
 def subreddit_viewer(generator):
-    try:
-        links = submission_getter(generator, verbose=True)
-    except ValueError, praw.errors.InvalidSubreddit:
-        print color.FAIL, "I'm sorry but the subreddit '", args.subreddit, \
-	"' does not exist; try again.", color.ENDC
+    links = submission_getter(generator, verbose=True)
  
 def submission_getter(generator, memo=[], verbose=False):
     for x, link in enumerate(generator):
@@ -81,7 +78,10 @@ def main():
 	            webbrowser.open( random.choice(links) )
 	            print_colorized("\n\nviewing a random submission\n\n")
 	        except KeyError, e:
-	            print_warning("There was an error with your input. Hint: Perhaps the subreddit you chose was too small to run through the program", '\n\nKeyError: ',e)    
+	            print_warning("There was an error with your input. \
+				  Hint: Perhaps the subreddit you chose was \
+				  too small to run through the program",
+				  '\n\nKeyError: ', e)    
 	    
 	    else:
 	        print_warning("You cannot use [-l LIMIT] with [-r RANDOM] (unless the limit is 10)")
@@ -102,9 +102,13 @@ def main():
             print_colorized('\nTop {0} front page links:'.format(args.limit))
         else:
             subm_gen = r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
-            print_colorized('\nTop {0} r/{1} links:'.format(args.limit, args.subreddit) )
+            print_colorized('\nTop {0} /r/{1} links:'.format(args.limit, args.subreddit) )
             
-        subreddit_viewer(subm_gen)    
+	try:
+	    subreddit_viewer(subm_gen)
+	except praw.errors.InvalidSubreddit:
+	    print color.FAIL, "I'm sorry but the subreddit '", args.subreddit, \
+		"' does not exist; try again.", color.ENDC
 
 if __name__ == '__main__':
 	main()
