@@ -7,7 +7,7 @@ import praw
 import webbrowser
  
 
-USER_AGENT = 'AlienFeed v0.2.8 by u/jw989 seen on ' \
+USER_AGENT = 'AlienFeed v0.2.9 by u/jw989 seen on ' \
 	     'Github http://github.com/jawerty/AlienFeed'
 
 r = praw.Reddit(user_agent=USER_AGENT)
