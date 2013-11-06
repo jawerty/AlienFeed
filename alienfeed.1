@@ -1,0 +1,58 @@
+.TH ALIENFEED "1" "December 2013" "ALIENFEED(1)" "User Commands"
+.SH NAME
+.PP
+alienfeed \- a command\-line Reddit client
+.SH SYNOPSIS
+.PP
+\f[B]alienfeed\f[-h] [-l LIMIT] [-o OPEN] [-r] subreddit
+.SH DESCRIPTION
+.PP
+alienfeed is a command\-line front\-end to Reddit which allows you to
+browse Reddit links or open them directly from the command\-line.
+.SH OPTIONS
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+print this help text and exit
+.TP
+\fB\-l LIMIT\fR, \fB\-\-limit LIMIT\fR
+Limits output (default output is 10 links)
+.TP
+\fB\-o OPEN\fR, \fB\-\-open OPEN\fR
+Opens one link that matches the number inputted
+.TP
+\fB\-r\fR, \fB\-\-random\fR
+Opens a random link (must be the only optional argument)
+.SH EXAMPLES
+.PP
+\fBalienfeed pics\fR
+
+Return a default list of the 10 top r/pics submissions
+
+\fBalienfeed pics -l 20\fR
+
+Return a default list of the 20 top r/pics submissions
+
+\fBalienfeed pics -o 3\fR
+
+Open the third result of the r/pics submissions
+
+\fBalienfeed funny -o 11 -l 11\fR
+
+Open the eleventh result of the r/funny submissions
+
+\fBalienfeed wtf -r\fR
+
+Open a random element of the list in the r/wtf submissions
+
+.SH BUGS
+.PP
+Bugs and suggestions should be reported at:
+<https://github.com/jawerty/AlienFeed/issues>
+.SH COPYRIGHT
+.PP
+alienfeed is released into MIT license by the copyright holders.
+.SH AUTHOR
+Jared Wright <jawerty210@gmail.com>.
+
+The homepage is available at
+.B "\%https://github.com/jawerty/AlienFeed"
