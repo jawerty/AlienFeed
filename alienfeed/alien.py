@@ -6,7 +6,7 @@ import argparse
 import praw
 import webbrowser
  
-r = praw.Reddit(user_agent='AlienFeed v0.2.7 by u/jw989 seen on Github http://github.com/jawerty/AlienFeed')
+r = praw.Reddit(user_agent='AlienFeed v0.2.8 by u/jw989 seen on Github http://github.com/jawerty/AlienFeed')
  
 class terminal_colors:
     HEADER = '\033[95m'
