@@ -4,7 +4,6 @@ import sys
 import random
 import argparse
 import praw
-import praw.errors
 import webbrowser
  
 
@@ -37,7 +36,7 @@ def submission_getter(generator, memo=[], verbose=False):
     for x, link in enumerate(generator):
         memo.append(link.url)
         if verbose:
-            print '\n', color.OKGREEN, x+1, '->', color.OKBLUE, link, color.ENDC
+            print '\n', color.OKGREEN, x + 1, '->', color.OKBLUE, link, color.ENDC
     return memo
  
 def print_colorized(text):
@@ -49,11 +48,18 @@ def print_warning(text, exc=None, exc_details=None):
     print color.WARNING, text , color.ENDC
 
 def main():
-    parser = _parser(description='''AlienFeed, by Jared Wright, is a commandline application made for displaying and interacting with recent Reddit links. I DO NOT HAVE ANY AFILIATION WITH REDDIT, I AM JUST A HACKER''')    
-    parser.add_argument("-l", "--limit", type=int, default=10,          help='Limits output (default output is 10 links)')
-    parser.add_argument("subreddit",               default='front',     help='Returns top links from subreddit \'front\' returns the front page')
-    parser.add_argument("-o", "--open",  type=int,                      help='Opens one link that matches the number inputted. Chosen by number')
-    parser.add_argument("-r", "--random",          action='store_true', help='Opens a random link (must be the only optional argument)')
+    parser = _parser(description='''AlienFeed, by Jared Wright, is a \
+		     commandline application made for displaying and \
+		     interacting with recent Reddit links. I DO NOT HAVE \
+		     ANY AFILIATION WITH REDDIT, I AM JUST A HACKER''')    
+    parser.add_argument("-l", "--limit", type=int, default=10,
+			help='Limits output (default output is 10 links)')
+    parser.add_argument("subreddit",               default='front',
+			help='Returns top links from subreddit \'front\' returns the front page')
+    parser.add_argument("-o", "--open",  type=int,
+			help='Opens one link that matches the number inputted. Chosen by number')
+    parser.add_argument("-r", "--random",          action='store_true',
+			help='Opens a random link (must be the only optional argument)')
     if len(sys.argv)==1:
         parser.print_help()
         sys.exit(1)
@@ -84,7 +90,8 @@ def main():
 				  '\n\nKeyError: ', e)    
 	    
 	    else:
-	        print_warning("You cannot use [-l LIMIT] with [-r RANDOM] (unless the limit is 10)")
+	        print_warning("You cannot use [-l LIMIT] with [-r RANDOM] \
+			      (unless the limit is 10)")
         	sys.exit(1)
 
     elif args.open:
@@ -94,7 +101,9 @@ def main():
            webbrowser.open( links[args.open - 1] )
            print '\n\nviewing submission\n\n'
         except KeyError, e:
-           print_warning("The number you typed in was out of the feed's range (try to pick a number between 1-10 or add '--limit {0}".format(e)  ,'\n\nKeyError: ',e)
+           print_warning("The number you typed in was out of the feed's range \
+			 (try to pick a number between 1-10 or add \
+			 '--limit {0}".format(e)  ,'\n\nKeyError: ',e)
     
     else:
         if args.subreddit == 'front':
@@ -102,7 +111,8 @@ def main():
             print_colorized('\nTop {0} front page links:'.format(args.limit))
         else:
             subm_gen = r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
-            print_colorized('\nTop {0} /r/{1} links:'.format(args.limit, args.subreddit) )
+            print_colorized('\nTop {0} /r/{1} links:'.format(args.limit,
+							     args.subreddit) )
             
 	try:
 	    subreddit_viewer(subm_gen)
