@@ -7,6 +7,7 @@ import praw
 import webbrowser
 from subprocess import call
 
+
 USER_AGENT = 'AlienFeed v0.3.0 by u/jw989 seen on ' \
 	     'Github http://github.com/jawerty/AlienFeed'
 
