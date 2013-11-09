@@ -8,8 +8,8 @@ import webbrowser
 from subprocess import call
 
 
-USER_AGENT = 'AlienFeed v0.3.0 by u/jw989 seen on ' \
-             'Github http://github.com/jawerty/AlienFeed'
+USER_AGENT = ('AlienFeed v0.3.0 by u/jw989 seen on '
+              'Github http://github.com/jawerty/AlienFeed')
 
 r = praw.Reddit(user_agent=USER_AGENT)
 
@@ -34,7 +34,7 @@ class LinkType(object):
 def get_link_types(link):
     types = []
     image_types = ('jpg', 'jpeg', 'gif', 'png')
-    image_hosts = ('imgur', 'imageshack', 'zwlxy', 'photobucket', 'beeimg')
+    image_hosts = ('imgur', 'imageshack', 'photobucket', 'beeimg')
 
     if link.url == link.permalink:
         types.append(color.INFO + LinkType.POST + color.ENDC)
@@ -53,7 +53,7 @@ def get_link_types(link):
 class _parser(argparse.ArgumentParser):
     def error(self, message):
         sys.stderr.write(color.FAIL +
-                        '\nAlienFeed error: %s\n\n' % (message + color.ENDC))
+                        '\nAlienFeed error: %s\n' % (message + color.ENDC))
         self.print_help()
         sys.exit(2)
 
@@ -77,21 +77,21 @@ def print_warning(text, exc=None, exc_details=None):
     print color.WARNING, text , color.ENDC
 
 def main():
-    parser = _parser(description='''AlienFeed, by Jared Wright, is a \
-                     commandline application made for displaying and \
-                     interacting with recent Reddit links. I DO NOT HAVE \
+    parser = _parser(description='''AlienFeed, by Jared Wright, is a
+                     commandline application made for displaying and
+                     interacting with recent Reddit links. I DO NOT HAVE
                      ANY AFILIATION WITH REDDIT, I AM JUST A HACKER''')
     
     parser.add_argument("-l", "--limit", type=int, default=10,
                         help='Limits output (default output is 10 links)')
     parser.add_argument("subreddit", default='front',
-                        help='Returns top links from subreddit \'front\' ' \
-                             'returns the front page')
+                        help="Returns top links from subreddit 'front' "
+                             "returns the front page")
     parser.add_argument("-o", "--open", type=int,
-                        help='Opens one link that matches the number ' \
+                        help='Opens one link that matches the number '
                              'inputted. Chosen by number')
     parser.add_argument("-r", "--random", action='store_true',
-                        help='Opens a random link (must be the only ' \
+                        help='Opens a random link (must be the only '
                              'optional argument)')
     parser.add_argument("-U", "--update", action='store_true',
                         help='Automatically updates AlienFeed via pip')
@@ -123,27 +123,33 @@ def main():
                 
             try:
                 webbrowser.open( random.choice(links) )
-                print_colorized("\n\nviewing a random submission\n\n")
-            except KeyError, e:
-                print_warning("There was an error with your input. \
-                  Hint: Perhaps the subreddit you chose was \
-                  too small to run through the program",
-                  '\n\nKeyError: ', e)    
+                print_colorized("\nviewing a random submission\n")
+            except IndexError, e:
+                print_warning("There was an error with your input. "
+                              "Hint: Perhaps the subreddit you chose was "
+                              "too small to run through the program",
+                              "IndexError:", e)
         else:
-            print_warning("You cannot use [-l LIMIT] with [-r RANDOM] \
-                  (unless the limit is 10)")
+            print_warning("You cannot use [-l LIMIT] with [-r RANDOM] "
+                          "(unless the limit is 10)")
             sys.exit(1)
 
     elif args.open:
         try:
-           subr = r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
-           links = submission_getter(subr)
-           webbrowser.open( links[args.open - 1] )
-           print '\n\nviewing submission\n\n'
-        except KeyError, e:
-           print_warning("The number you typed in was out of the feed's range \
-             (try to pick a number between 1-10 or add \
-             '--limit {0}".format(e)  ,'\n\nKeyError: ',e)
+            subr = (r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
+                    if args.subreddit != 'front' else
+                    r.get_front_page(limit=args.limit))
+            links = submission_getter(subr)
+            webbrowser.open( links[args.open - 1] )
+            print '\nviewing submission\n'
+        except IndexError, e:
+            print_warning("The number you typed in was out of the feed's range"
+                          " (try to pick a number between 1-10 or add"
+                          " --limit {0}".format(e), "IndexError:", e)
+        except praw.errors.InvalidSubreddit, e:
+            print_warning("I'm sorry but the subreddit '{0}' does not exist; "
+                          "try again.".format(args.subreddit),
+                          "InvalidSubreddit:", e)
     
     else:
         if args.subreddit == 'front':
@@ -157,9 +163,10 @@ def main():
     try:
         if subm_gen:
             subreddit_viewer(subm_gen)
-    except praw.errors.InvalidSubreddit:
-        print color.FAIL, "I'm sorry but the subreddit '", args.subreddit, \
-        "' does not exist; try again.", color.ENDC
+    except praw.errors.InvalidSubreddit, e:
+        print_warning("I'm sorry but the subreddit '{0}' does not exist; "
+                      "try again.".format(args.subreddit),
+                      "InvalidSubreddit:", e)
 
     if args.update == True:
         try:
