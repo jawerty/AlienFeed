@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='AlienFeed',
-      version='0.3.0',
+      version='0.3.1',
       description='AlienFeed is a simple Reddit client for viewing and opening links from your console.',
       author='Jared Wright',
       license='MIT',
