@@ -20,19 +20,19 @@ class terminal_colors(object):
     WARNING = '\033[93m'
     FAIL = '\033[91m'
     ENDC = '\033[0m'
-    
+
 color = terminal_colors()
- 
+
 class _parser(argparse.ArgumentParser):
     def error(self, message):
         sys.stderr.write(color.FAIL +
                         '\nAlienFeed error: %s\n\n' % (message + color.ENDC))
         self.print_help()
-    sys.exit(2)
- 
+        sys.exit(2)
+
 def subreddit_viewer(generator):
     links = submission_getter(generator, verbose=True)
- 
+
 def submission_getter(generator, memo=[], verbose=False):
     for x, link in enumerate(generator):
         memo.append(link.url)
@@ -44,7 +44,7 @@ def submission_getter(generator, memo=[], verbose=False):
                 print '\n', color.OKGREEN, x + 1, '->', color.OKBLUE, \
                 link, color.ENDC
     return memo
- 
+
 def print_colorized(text):
     print color.HEADER, text, color.ENDC
     
