@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
-import sys
-import random
 import argparse
-import praw
-import webbrowser
+import math
+import os
+import random
 from subprocess import call
+import sys
+from textwrap import TextWrapper
+import webbrowser
+
+import praw
 
 
 USER_AGENT = ('AlienFeed v0.3.0 by u/jw989 seen on '
@@ -13,16 +17,19 @@ USER_AGENT = ('AlienFeed v0.3.0 by u/jw989 seen on '
 
 r = praw.Reddit(user_agent=USER_AGENT)
 
+
 class TerminalColor(object):
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKGREEN = '\033[92m'
+    SUBTEXT = '\033[90m'
     INFO = '\033[96m'
     WARNING = '\033[93m'
     FAIL = '\033[91m'
     ENDC = '\033[0m'
 
 color = TerminalColor()
+
 
 class LinkType(object):
     NSFW = '[NSFW]'
@@ -61,11 +68,47 @@ def subreddit_viewer(generator):
     links = submission_getter(generator, verbose=True)
 
 def submission_getter(generator, memo=[], verbose=False):
+    links = []
+    scores = []
+    subreddits = set()
+
     for x, link in enumerate(generator):
         memo.append(link.url)
         if verbose:
-            print color.OKGREEN, x + 1, '->', color.OKBLUE, \
-                  link, get_link_types(link), color.ENDC
+            links.append(link)
+            scores.append(link.score)
+            subreddits.add(str(link.subreddit))
+
+    if not verbose:
+        return memo
+
+    count_width = int(math.log(len(links), 10)) + 1
+    score_width = len(str(max(scores)))
+    fmt = {'arrow': ' -> '}
+
+    indent = ' ' * (count_width + len(fmt['arrow']) + score_width + 1)
+    try:
+        _, terminal_width = os.popen('stty size', 'r').read().split()
+        terminal_width = int(terminal_width)
+    except:
+        terminal_width = 80
+    wrapper = TextWrapper(subsequent_indent=indent, width=terminal_width)
+
+    for i, link in enumerate(links):
+        fmt['count'] = color.OKGREEN + str(i + 1).rjust(count_width)
+        fmt['score'] = color.WARNING + str(link.score).rjust(score_width)
+        fmt['title'] = color.OKBLUE + link.title
+        fmt['tags'] = get_link_types(link)
+
+        if len(subreddits) > 1:
+            fmt['title'] += color.SUBTEXT + u' ({0})'.format(link.subreddit)
+
+        wrap = wrapper.wrap(
+            u'{count}{arrow}{score} {title} {tags}'.format(**fmt))
+
+        for line in wrap:
+            print line
+
     return memo
 
 def print_colorized(text):
