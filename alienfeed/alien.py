@@ -13,15 +13,42 @@ USER_AGENT = 'AlienFeed v0.3.0 by u/jw989 seen on ' \
 
 r = praw.Reddit(user_agent=USER_AGENT)
 
-class terminal_colors(object):
+class TerminalColor(object):
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKGREEN = '\033[92m'
+    INFO = '\033[96m'
     WARNING = '\033[93m'
     FAIL = '\033[91m'
     ENDC = '\033[0m'
 
-color = terminal_colors()
+color = TerminalColor()
+
+class LinkType(object):
+    NSFW = '[NSFW]'
+    POST = '[POST]'
+    PIC = '[PIC]'
+    PICS = '[PICS]'
+    VIDEO = '[VIDEO]'
+
+def get_link_types(link):
+    types = []
+    image_types = ('jpg', 'jpeg', 'gif', 'png')
+    image_hosts = ('imgur', 'imageshack', 'zwlxy', 'photobucket', 'beeimg')
+
+    if link.url == link.permalink:
+        types.append(color.INFO + LinkType.POST + color.ENDC)
+    elif link.url.split('.')[-1].lower() in image_types:
+        types.append(color.OKGREEN + LinkType.PIC + color.ENDC)
+    elif link.domain.split('.')[-2].lower() in image_hosts:
+        types.append(color.OKGREEN + LinkType.PICS + color.ENDC)
+    elif link.media:
+        types.append(color.OKGREEN + LinkType.VIDEO + color.ENDC)
+
+    if link.over_18:
+        types.append(color.FAIL + LinkType.NSFW + color.ENDC)
+
+    return ' '.join(types)
 
 class _parser(argparse.ArgumentParser):
     def error(self, message):
@@ -37,12 +64,8 @@ def submission_getter(generator, memo=[], verbose=False):
     for x, link in enumerate(generator):
         memo.append(link.url)
         if verbose:
-            if link.over_18:
-                print '\n', color.OKGREEN, x + 1, '->', color.OKBLUE, \
-                link, color.FAIL, '[NSFW]', color.ENDC
-            else:
-                print '\n', color.OKGREEN, x + 1, '->', color.OKBLUE, \
-                link, color.ENDC
+            print color.OKGREEN, x + 1, '->', color.OKBLUE, \
+                  link, get_link_types(link), color.ENDC
     return memo
 
 def print_colorized(text):
@@ -78,6 +101,8 @@ def main():
         parser.print_help()
         sys.exit(1)
     args=parser.parse_args()    
+
+    subm_gen = None
 
     if args.open and args.random:
         print_warning("You cannot use [-o OPEN] with [-r RANDOM]")
@@ -123,14 +148,15 @@ def main():
     else:
         if args.subreddit == 'front':
             subm_gen = r.get_front_page(limit=args.limit)
-            print_colorized('\nTop {0} front page links:'.format(args.limit))
+            print_colorized('Top {0} front page links:'.format(args.limit))
         else:
             subm_gen = r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
-            print_colorized('\nTop {0} /r/{1} links:'.format(args.limit,
-                                 args.subreddit) )
+            print_colorized('Top {0} /r/{1} links:'.format(
+                args.limit, args.subreddit))
 
     try:
-        subreddit_viewer(subm_gen)
+        if subm_gen:
+            subreddit_viewer(subm_gen)
     except praw.errors.InvalidSubreddit:
         print color.FAIL, "I'm sorry but the subreddit '", args.subreddit, \
         "' does not exist; try again.", color.ENDC
