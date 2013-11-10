@@ -3,6 +3,11 @@ AlienFeed is a command line application made for displaying and interacting with
 
 Current version: 0.3.2
 
+# Contributors
+* jawerty
+* mreinhardt
+* thekarangoel
+
 ## Install Instructions
 To download and install AlienFeed, all you need to do is get a copy of this distribution with setup.py or install via pypi
 
