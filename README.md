@@ -5,10 +5,10 @@ AlienFeed is a command line application made for displaying and interacting with
 =======
 Current version: 0.3.2
 
-# Contributors
-* jawerty
-* mreinhardt
-* thekarangoel
+### Contributors
+* [jawerty](http://github.com/jawerty)
+* [mreinhardt](http://github.com/mreinhardt)
+* [thekarangoel](http://github.com/thekarangoel)
 
 >>>>>>> 67a7632... Update README.md
 ## Install Instructions
