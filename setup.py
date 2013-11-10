@@ -16,5 +16,5 @@ setup(name='AlienFeed',
         'console_scripts': [
             'alienfeed = alien:main'
         ],
-	  }
-     )
+      }
+)
