@@ -12,7 +12,7 @@ import webbrowser
 import praw
 
 
-USER_AGENT = ('AlienFeed v0.3.0 by u/jw989 seen on '
+USER_AGENT = ('AlienFeed v0.3.1 by u/jw989 seen on '
               'Github http://github.com/jawerty/AlienFeed')
 
 r = praw.Reddit(user_agent=USER_AGENT)
@@ -35,8 +35,9 @@ class LinkType(object):
     NSFW = '[NSFW]'
     POST = '[POST]'
     PIC = '[PIC]'
-    PICS = '[PICS]'
+    ALBUM = '[ALBUM]'
     VIDEO = '[VIDEO]'
+
 
 def get_link_types(link):
     types = []
@@ -44,12 +45,16 @@ def get_link_types(link):
     image_hosts = ('imgur', 'imageshack', 'photobucket', 'beeimg')
 
     if link.url == link.permalink:
+        # link is a post
         types.append(color.INFO + LinkType.POST + color.ENDC)
     elif link.url.split('.')[-1].lower() in image_types:
+        # is it an image?
         types.append(color.OKGREEN + LinkType.PIC + color.ENDC)
     elif link.domain.split('.')[-2].lower() in image_hosts:
-        types.append(color.OKGREEN + LinkType.PICS + color.ENDC)
+        # supposedly for an album, can also be a single image
+        types.append(color.OKGREEN + LinkType.ALBUM + color.ENDC)
     elif link.media:
+        # it's a video
         types.append(color.OKGREEN + LinkType.VIDEO + color.ENDC)
 
     if link.over_18:
