@@ -8,16 +8,16 @@ from subprocess import call
 import sys
 from textwrap import TextWrapper
 import webbrowser
-import praw #Reddit API Wrapper
 
-__version__ = "0.3.2"
-USER_AGENT = 'AlienFeed v'+__version__+' by u/jw989 seen on ' \
-             'Github http://github.com/jawerty/AlienFeed'
+import praw
 
-#Reddit object accessed via praw
+
+USER_AGENT = ('AlienFeed v0.3.0 by u/jw989 seen on '
+              'Github http://github.com/jawerty/AlienFeed')
+
 r = praw.Reddit(user_agent=USER_AGENT)
 
-#Color codes used to make the display pretty  
+
 class TerminalColor(object):
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -30,7 +30,7 @@ class TerminalColor(object):
 
 color = TerminalColor()
 
-#Tags to describe each link 
+
 class LinkType(object):
     NSFW = '[NSFW]'
     POST = '[POST]'
@@ -40,8 +40,6 @@ class LinkType(object):
 
 def get_link_types(link):
     types = []
-    # When the image's link ends with image_types or comes from the imagehosts
-    # then it will append the link types (e.g. [NSFW], [POST], [VIDEO])
     image_types = ('jpg', 'jpeg', 'gif', 'png')
     image_hosts = ('imgur', 'imageshack', 'photobucket', 'beeimg')
 
@@ -59,19 +57,16 @@ def get_link_types(link):
 
     return ' '.join(types)
 
-class _parser(argparse.ArgumentParser): # the parsing object for argparse -- used to initialize argparse.
+class _parser(argparse.ArgumentParser):
     def error(self, message):
         sys.stderr.write(color.FAIL +
                         '\nAlienFeed error: %s\n' % (message + color.ENDC))
         self.print_help()
         sys.exit(2)
 
-#method to display the generated links from submission_getter
 def subreddit_viewer(generator):
     links = submission_getter(generator, verbose=True)
 
-# submission_getter - Used to gather the praw generated input and 
-# create the AlienFeed output log utilizing the TerminalCOlors object 'color'
 def submission_getter(generator, memo=[], verbose=False):
     links = []
     scores = []
@@ -87,7 +82,6 @@ def submission_getter(generator, memo=[], verbose=False):
     if not verbose:
         return memo
 
-    # aligning all of the arrows ' -> ' for the AlienFeed output
     count_width = int(math.log(len(links), 10)) + 1
     score_width = len(str(max(scores)))
     fmt = {'arrow': ' -> '}
@@ -98,7 +92,6 @@ def submission_getter(generator, memo=[], verbose=False):
         terminal_width = int(terminal_width)
     except:
         terminal_width = 80
-
     wrapper = TextWrapper(subsequent_indent=indent, width=terminal_width)
 
     for i, link in enumerate(links):
@@ -116,20 +109,17 @@ def submission_getter(generator, memo=[], verbose=False):
         for line in wrap:
             print line
 
-    return memo #The generated ouput to be displayed to the user
+    return memo
 
-# method to output color text
 def print_colorized(text):
     print color.HEADER, text, color.ENDC
     
-# warning for AlienFeed
 def print_warning(text, exc=None, exc_details=None):    
     if exc and exc_details:
         print color.FAIL, exc, exc_details
     print color.WARNING, text , color.ENDC
 
 def main():
-    # argparse argument management
     parser = _parser(description='''AlienFeed, by Jared Wright, is a
                      commandline application made for displaying and
                      interacting with recent Reddit links. I DO NOT HAVE
@@ -148,35 +138,25 @@ def main():
                              'optional argument)')
     parser.add_argument("-U", "--update", action='store_true',
                         help='Automatically updates AlienFeed via pip')
-    parser.add_argument("-v", "--version",action='store_true',
-                        help='Displays version of AlienFeed.')
 
 
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
-
     args=parser.parse_args()    
 
     subm_gen = None
 
-    # returns current version of AlienFeed
-    if args.version:
-        print "AlienFeed version: "+__version__
-
-    # random automatically opens the link, therefore -o interferes with -r
     if args.open and args.random:
         print_warning("You cannot use [-o OPEN] with [-r RANDOM]")
         sys.exit(1)  
 
-    # if random is present, it ignores the other arguments for the sake of simplicity
     if args.random:
         if args.limit == 10:
             if args.subreddit == 'front':
                 front = r.get_front_page(limit=200)
                 links = submission_getter(front)
             else:
-                # Only deals with random 'top' posts on the front page
                 top = r.get_subreddit(args.subreddit).get_top(limit=200)
                 new = r.get_subreddit(args.subreddit).get_new(limit=200)
                 hot = r.get_subreddit(args.subreddit).get_hot(limit=200)
@@ -185,14 +165,13 @@ def main():
                 links = submission_getter(hot, links)
                 
             try:
-                webbrowser.open( random.choice(links) ) #opens in default web browser
+                webbrowser.open( random.choice(links) )
                 print_colorized("\nviewing a random submission\n")
             except IndexError, e:
                 print_warning("There was an error with your input. "
                               "Hint: Perhaps the subreddit you chose was "
                               "too small to run through the program",
                               "IndexError:", e)
-
         else:
             print_warning("You cannot use [-l LIMIT] with [-r RANDOM] "
                           "(unless the limit is 10)")
@@ -226,13 +205,12 @@ def main():
 
     try:
         if subm_gen:
-            subreddit_viewer(subm_gen) 
+            subreddit_viewer(subm_gen)
     except praw.errors.InvalidSubreddit, e:
         print_warning("I'm sorry but the subreddit '{0}' does not exist; "
                       "try again.".format(args.subreddit),
                       "InvalidSubreddit:", e)
 
-    # When argument is added, pip will automatically run as a child process (optional)
     if args.update == True:
         try:
             print "Upgrading AlienFeed..."

@@ -1,6 +1,8 @@
 # AlienFeed
 AlienFeed is a command line application made for displaying and interacting with Reddit submissions. The client can return a list containing the top submissions in a subreddit, and even open the links up if you'd like. I do not have any affiliation with Reddit; I made this to be a fun utilization of the Reddit API.
 
+=======
+
 Current version: 0.3.2
 
 ### Contributors
