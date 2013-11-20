@@ -59,7 +59,7 @@ def get_link_types(link):
 
     if link.over_18:
         types.append(color.FAIL + LinkType.NSFW + color.ENDC)
-
+    
     return ' '.join(types)
 
 class _parser(argparse.ArgumentParser):
@@ -182,7 +182,6 @@ def main():
                           "(unless the limit is 10)")
             sys.exit(1)
 
-    elif args.open:
         try:
             subr = (r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
                     if args.subreddit != 'front' else
@@ -198,7 +197,7 @@ def main():
             print_warning("I'm sorry but the subreddit '{0}' does not exist; "
                           "try again.".format(args.subreddit),
                           "InvalidSubreddit:", e)
-    
+        
     else:
         if args.subreddit == 'front':
             subm_gen = r.get_front_page(limit=args.limit)
