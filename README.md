@@ -90,7 +90,7 @@ This command would of course open up the link in a new browser tab.
 
 To upgrade alienfeed via pip, you would need to call this argument, '-U'
 ```
-$alienfeed funny -U
+$ alienfeed funny -U
 ```
 
 ## Contact
