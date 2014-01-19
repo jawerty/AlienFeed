@@ -11,13 +11,14 @@ import webbrowser
 
 import praw
 
-
+# Praw (Reddit API Wrapper) initialization
 USER_AGENT = ('AlienFeed v0.3.1 by u/jw989 seen on '
               'Github http://github.com/jawerty/AlienFeed')
 
 r = praw.Reddit(user_agent=USER_AGENT)
 
 
+# Terminal color object. Used for colorful output
 class TerminalColor(object):
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
