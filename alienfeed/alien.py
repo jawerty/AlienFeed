@@ -59,6 +59,7 @@ def get_link_types(link):
         types.append(color.OKGREEN + LinkType.VIDEO + color.ENDC)
 
     if link.over_18:
+        # it's nsfw
         types.append(color.FAIL + LinkType.NSFW + color.ENDC)
     
     return ' '.join(types)
