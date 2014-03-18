@@ -158,7 +158,24 @@ def main():
         print_warning("You cannot use [-o OPEN] with [-r RANDOM]")
         sys.exit(1)  
 
-    if args.random:
+    if args.open:
+        try:
+            subr = (r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
+                    if args.subreddit != 'front' else
+                    r.get_front_page(limit=args.limit))
+            links = submission_getter(subr)
+            webbrowser.open( links[args.open - 1] )
+            print_colorized("\nViewing a submission\n")
+        except IndexError, e:
+            print_warning("The number you typed in was out of the feed's range"
+                          " (try to pick a number between 1-10 or add"
+                          " --limit {0}".format(e), "IndexError:", e)
+        except praw.errors.InvalidSubreddit, e:
+            print_warning("I'm sorry but the subreddit '{0}' does not exist; "
+                          "try again.".format(args.subreddit),
+                          "InvalidSubreddit:", e)
+
+    elif args.random:
         if args.limit == 10:
             if args.subreddit == 'front':
                 front = r.get_front_page(limit=200)
@@ -173,7 +190,7 @@ def main():
                 
             try:
                 webbrowser.open( random.choice(links) )
-                print_colorized("\nviewing a random submission\n")
+                print_colorized("\nViewing a random submission\n")
             except IndexError, e:
                 print_warning("There was an error with your input. "
                               "Hint: Perhaps the subreddit you chose was "
