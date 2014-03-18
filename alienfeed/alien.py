@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import argparse
+from argparse import ArgumentParser, ArgumentTypeError
 import math
 import os
 import random
@@ -64,7 +64,7 @@ def get_link_types(link):
     
     return ' '.join(types)
 
-class _parser(argparse.ArgumentParser):
+class _parser(ArgumentParser):
     def error(self, message):
         sys.stderr.write(color.FAIL +
                         '\nAlienFeed error: %s\n' % (message + color.ENDC))
@@ -126,6 +126,20 @@ def print_warning(text, exc=None, exc_details=None):
         print color.FAIL, exc, exc_details
     print color.WARNING, text , color.ENDC
 
+# Parse an argument value in the form of a range, like 1..5
+def parse_range(string):
+    try:
+        splitted = string.split('..');
+        if (len(splitted) != 2):
+            raise ArgumentTypeError("'" + string + "' is not a valid range. Expected forms like '1..5'")    
+        
+        start = int(splitted[0])
+        end = int(splitted[1])
+
+        return splitted
+    except ValueError:
+        raise ArgumentTypeError("Range values are not valid integers. Expected forms like '1..5'")            
+
 def main():
     parser = _parser(description='''AlienFeed, by Jared Wright, is a
                      commandline application made for displaying and
@@ -140,6 +154,9 @@ def main():
     parser.add_argument("-o", "--open", type=int,
                         help='Opens one link that matches the number '
                              'inputted. Chosen by number')
+    parser.add_argument("-or", "--openrange", type=parse_range, 
+                        help="Opens a range of links of the form 'x..y', "
+                             "where 'x' and 'y' are chosen numbers")
     parser.add_argument("-r", "--random", action='store_true',
                         help='Opens a random link (must be the only '
                              'optional argument)')
@@ -147,18 +164,54 @@ def main():
                         help='Automatically updates AlienFeed via pip')
 
 
+    # if only 1 argument, print the help
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
-    args=parser.parse_args()    
+
+    # else, get the arguments    
+    args = parser.parse_args()    
 
     subm_gen = None
 
-    if args.open and args.random:
+    # Do acion depending on the passed arguments
+    if args.openrange:
+        if args.open or args.random:
+            print_warning("You cannot use [-or OPENRANGE] with [-o OPEN] or with [-r RANDOM]")
+            sys.exit(1)  
+        else:
+            start = int(args.openrange[0])
+            end = int(args.openrange[1])
+
+            # ensure end is not above the limit
+            if end > args.limit:
+                print_warning("The upper range limit you typed was out of the feed's range"
+                              " (try to pick a number between 1 and 10 or add --limit {0})")
+                sys.exit(1)
+            else:
+                end += 1        # add 1 to include upper end of range
+
+            try:
+                subr = (r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
+                        if args.subreddit != 'front' else
+                        r.get_front_page(limit=args.limit))
+                links = submission_getter(subr)
+
+                print_colorized("\nViewing a range of submissions\n")        
+
+                for x in range(start, end):
+                    webbrowser.open( links[x - 1] )
+                
+            except praw.errors.InvalidSubreddit, e:
+                print_warning("I'm sorry but the subreddit '{0}' does not exist; "
+                              "try again.".format(args.subreddit),
+                              "InvalidSubreddit:", e)    
+                
+    elif args.open and args.random:
         print_warning("You cannot use [-o OPEN] with [-r RANDOM]")
         sys.exit(1)  
 
-    if args.open:
+    elif args.open:
         try:
             subr = (r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
                     if args.subreddit != 'front' else
@@ -168,8 +221,8 @@ def main():
             print_colorized("\nViewing a submission\n")
         except IndexError, e:
             print_warning("The number you typed in was out of the feed's range"
-                          " (try to pick a number between 1-10 or add"
-                          " --limit {0}".format(e), "IndexError:", e)
+                          " (try to pick a number between 1 and 10 or add"
+                          " --limit {0})".format(e), "IndexError:", e)
         except praw.errors.InvalidSubreddit, e:
             print_warning("I'm sorry but the subreddit '{0}' does not exist; "
                           "try again.".format(args.subreddit),
