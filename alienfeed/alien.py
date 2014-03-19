@@ -8,7 +8,6 @@ from subprocess import call
 import sys
 from textwrap import TextWrapper
 import webbrowser
-
 import praw
 
 # Praw (Reddit API Wrapper) initialization
@@ -118,6 +117,21 @@ def submission_getter(generator, memo=[], verbose=False):
 
     return memo
 
+# Get a list of links for a subreddit
+def get_links_from_subreddit(subreddit, limit):
+    links = []
+
+    try:
+        subr = ( r.get_subreddit(subreddit).get_hot(limit = limit) if subreddit != 'front' else r.get_front_page(limit = limit) )
+        links = submission_getter(subr)
+
+    except praw.errors.InvalidSubreddit, e:
+        print_warning("I'm sorry but the subreddit '{0}' does not exist; try again.".format(subreddit), "InvalidSubreddit:", e)    
+
+    return links    
+
+
+# Print-related
 def print_colorized(text):
     print color.HEADER, text, color.ENDC
     
@@ -191,21 +205,15 @@ def main():
             else:
                 end += 1        # add 1 to include upper end of range
 
-            try:
-                subr = (r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
-                        if args.subreddit != 'front' else
-                        r.get_front_page(limit=args.limit))
-                links = submission_getter(subr)
+            # Get the links for the subreddit
+            links = get_links_from_subreddit(args.subreddit, args.limit)
 
-                print_colorized("\nViewing a range of submissions\n")        
+            print_colorized("\nViewing a range of submissions\n")        
 
-                for x in range(start, end):
-                    webbrowser.open( links[x - 1] )
+            # Open them
+            for x in range(start, end):
+                webbrowser.open(links[x - 1])
                 
-            except praw.errors.InvalidSubreddit, e:
-                print_warning("I'm sorry but the subreddit '{0}' does not exist; "
-                              "try again.".format(args.subreddit),
-                              "InvalidSubreddit:", e)    
                 
     elif args.open and args.random:
         print_warning("You cannot use [-o OPEN] with [-r RANDOM]")
@@ -213,20 +221,17 @@ def main():
 
     elif args.open:
         try:
-            subr = (r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
-                    if args.subreddit != 'front' else
-                    r.get_front_page(limit=args.limit))
-            links = submission_getter(subr)
-            webbrowser.open( links[args.open - 1] )
+            # Get the links for the subreddit
+            links = get_links_from_subreddit(args.subreddit, args.limit)
+
             print_colorized("\nViewing a submission\n")
+
+            # Open desired link
+            webbrowser.open( links[args.open - 1] )
         except IndexError, e:
             print_warning("The number you typed in was out of the feed's range"
                           " (try to pick a number between 1 and 10 or add"
                           " --limit {0})".format(e), "IndexError:", e)
-        except praw.errors.InvalidSubreddit, e:
-            print_warning("I'm sorry but the subreddit '{0}' does not exist; "
-                          "try again.".format(args.subreddit),
-                          "InvalidSubreddit:", e)
 
     elif args.random:
         if args.limit == 10:
@@ -244,6 +249,7 @@ def main():
             try:
                 webbrowser.open( random.choice(links) )
                 print_colorized("\nViewing a random submission\n")
+
             except IndexError, e:
                 print_warning("There was an error with your input. "
                               "Hint: Perhaps the subreddit you chose was "
@@ -253,22 +259,6 @@ def main():
             print_warning("You cannot use [-l LIMIT] with [-r RANDOM] "
                           "(unless the limit is 10)")
             sys.exit(1)
-
-        try:
-            subr = (r.get_subreddit(args.subreddit).get_hot(limit=args.limit)
-                    if args.subreddit != 'front' else
-                    r.get_front_page(limit=args.limit))
-            links = submission_getter(subr)
-            webbrowser.open( links[args.open - 1] )
-            print '\nviewing submission\n'
-        except IndexError, e:
-            print_warning("The number you typed in was out of the feed's range"
-                          " (try to pick a number between 1-10 or add"
-                          " --limit {0}".format(e), "IndexError:", e)
-        except praw.errors.InvalidSubreddit, e:
-            print_warning("I'm sorry but the subreddit '{0}' does not exist; "
-                          "try again.".format(args.subreddit),
-                          "InvalidSubreddit:", e)
         
     else:
         if args.subreddit == 'front':
