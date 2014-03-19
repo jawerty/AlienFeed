@@ -70,25 +70,25 @@ class _parser(ArgumentParser):
         self.print_help()
         sys.exit(2)
 
-def subreddit_viewer(generator):
-    links = submission_getter(generator, verbose=True)
-
-def submission_getter(generator, memo=[], verbose=False):
-    links = []
+# Gets a List of submissions in a desired form
+# the submission_list parameter is a list of submissions (returned by Praw) to be processed
+# if only_links = true, it returns a list of links | else, returns the list of submissions
+def submission_getter(submission_list, only_links = False, links = [], verbose = False):
+    submissions = []
     scores = []
     subreddits = set()
 
-    for x, link in enumerate(generator):
-        memo.append(link.url)
+    for x, submission in enumerate(submission_list):
+        links.append(submission.url)
         if verbose:
-            links.append(link)
-            scores.append(link.score)
-            subreddits.add(str(link.subreddit))
+            submissions.append(submission)
+            scores.append(submission.score)
+            subreddits.add(str(submission.subreddit))
 
     if not verbose:
-        return memo
-
-    count_width = int(math.log(len(links), 10)) + 1
+        return links if only_links else submissions
+ 
+    count_width = int(math.log(len(submissions), 10)) + 1
     score_width = len(str(max(scores)))
     fmt = {'arrow': ' -> '}
 
@@ -100,14 +100,14 @@ def submission_getter(generator, memo=[], verbose=False):
         terminal_width = 80
     wrapper = TextWrapper(subsequent_indent=indent, width=terminal_width)
 
-    for i, link in enumerate(links):
+    for i, submission in enumerate(submissions):
         fmt['count'] = color.OKGREEN + str(i + 1).rjust(count_width)
-        fmt['score'] = color.WARNING + str(link.score).rjust(score_width)
-        fmt['title'] = color.OKBLUE + link.title
-        fmt['tags'] = get_link_types(link)
+        fmt['score'] = color.WARNING + str(submission.score).rjust(score_width)
+        fmt['title'] = color.OKBLUE + submission.title
+        fmt['tags'] = get_link_types(submission)
 
         if len(subreddits) > 1:
-            fmt['title'] += color.SUBTEXT + u' ({0})'.format(link.subreddit)
+            fmt['title'] += color.SUBTEXT + u' ({0})'.format(submission.subreddit)
 
         wrap = wrapper.wrap(
             u'{count}{arrow}{score} {title} {tags}'.format(**fmt))
@@ -115,15 +115,20 @@ def submission_getter(generator, memo=[], verbose=False):
         for line in wrap:
             print line
 
-    return memo
+    return links if only_links else submissions 
+ 
+
+# View a subreddit (i.e. display the links from it) 
+def subreddit_viewer(submission_list):
+    links = submission_getter(submission_list, only_links = True, verbose = True)
 
 # Get a list of links for a subreddit
 def get_links_from_subreddit(subreddit, limit):
     links = []
 
     try:
-        subr = ( r.get_subreddit(subreddit).get_hot(limit = limit) if subreddit != 'front' else r.get_front_page(limit = limit) )
-        links = submission_getter(subr)
+        submissions = ( r.get_subreddit(subreddit).get_hot(limit = limit) if subreddit != 'front' else r.get_front_page(limit = limit) )
+        links = submission_getter(submissions, only_links = True)
 
     except praw.errors.InvalidSubreddit, e:
         print_warning("I'm sorry but the subreddit '{0}' does not exist; try again.".format(subreddit), "InvalidSubreddit:", e)    
@@ -237,14 +242,14 @@ def main():
         if args.limit == 10:
             if args.subreddit == 'front':
                 front = r.get_front_page(limit=200)
-                links = submission_getter(front)
+                links = submission_getter(front, only_links = True)
             else:
                 top = r.get_subreddit(args.subreddit).get_top(limit=200)
                 new = r.get_subreddit(args.subreddit).get_new(limit=200)
                 hot = r.get_subreddit(args.subreddit).get_hot(limit=200)
-                links = submission_getter(top)
-                links = submission_getter(new, links)
-                links = submission_getter(hot, links)
+                links = submission_getter(top, only_links = True)
+                links = submission_getter(new, True, links)
+                links = submission_getter(hot, True, links)
                 
             try:
                 webbrowser.open( random.choice(links) )
