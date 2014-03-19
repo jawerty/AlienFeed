@@ -10,6 +10,7 @@ Current version: 0.3.2
 * [mreinhardt](http://github.com/mreinhardt)
 * [thekarangoel](http://github.com/thekarangoel)
 * [RaulLepsa](http://github.com/RaulLepsa)
+
 ## Install Instructions
 To download and install AlienFeed, all you need to do is get a copy of this distribution with setup.py or install via pypi
 
