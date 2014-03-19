@@ -81,12 +81,23 @@ $ alienfeed funny -o 11 -l 11
 ```
 
 The random function opens up a random link from the requested subreddit in a new browser tab (similar to the --open argument). Use the optional argument '-r or --random'. Example using the r/wtf subreddit.
+This command would of course open up the link in a new browser tab.
 
 ```
 $ alienfeed wtf -r
 ```
 
-This command would of course open up the link in a new browser tab.
+To open a range of submissions, you need to specify the `-or` (`--openrange`) argument, followed by a range in the form `x..y`. Every submission will open in a new browser tab. Similar to the `--open` argument, in order to open a range greater than 10, the `--limit` has to be specified.
+
+```
+$ alienfeed supershibe -or 1..5
+```
+
+In order to display the self-text of a post, the `-s` (or `--self`) argument has to be specified. It does not take any value, however. It works with any of the `--open`, `--random` or `--openrange` arguments, as well as for the default printing of the list.
+
+```
+$ alienfeed jokes -or 1..2 -s
+```
 
 To upgrade alienfeed via pip, you would need to call this argument, '-U'
 ```
