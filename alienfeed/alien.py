@@ -58,7 +58,7 @@ def get_link_types(link):
     if link.over_18:
         # it's nsfw
         types.append(color.FAIL + LinkType.NSFW + color.ENDC)
-    
+
     return ' '.join(types)
 
 class _parser(ArgumentParser):
@@ -85,7 +85,7 @@ def submission_getter(submission_list, verbose = False):
 
     if not verbose:
         return submissions
- 
+
     count_width = int(math.log(len(submissions), 10)) + 1
     score_width = len(str(max(scores)))
 
@@ -97,7 +97,7 @@ def submission_getter(submission_list, verbose = False):
         terminal_width = int(terminal_width)
     except:
         terminal_width = 80
-    
+
     wrapper = TextWrapper(subsequent_indent = indent, width = terminal_width)
 
     for i, submission in enumerate(submissions):
@@ -115,10 +115,10 @@ def submission_getter(submission_list, verbose = False):
         for line in wrap:
             print line
 
-    return submissions 
- 
+    return submissions
 
-# View a subreddit (i.e. display the links from it) 
+
+# View a subreddit (i.e. display the links from it)
 def subreddit_viewer(submission_list):
     links = submission_getter(submission_list, verbose = True)
 
@@ -131,16 +131,16 @@ def get_submissions_from_subreddit(subreddit, limit):
         links = submission_getter(submissions)
 
     except praw.errors.InvalidSubreddit, e:
-        print_warning("I'm sorry but the subreddit '{0}' does not exist; try again.".format(subreddit), "InvalidSubreddit:", e)    
+        print_warning("I'm sorry but the subreddit '{0}' does not exist; try again.".format(subreddit), "InvalidSubreddit:", e)
 
-    return links    
+    return links
 
 
 # Print-related
 def print_colorized(text):
     print color.HEADER, text, color.ENDC
-    
-def print_warning(text, exc=None, exc_details=None):    
+
+def print_warning(text, exc=None, exc_details=None):
     if exc and exc_details:
         print color.FAIL, exc, exc_details
     print color.WARNING, text , color.ENDC
@@ -150,14 +150,14 @@ def parse_range(string):
     try:
         splitted = string.split('..');
         if (len(splitted) != 2):
-            raise ArgumentTypeError("'" + string + "' is not a valid range. Expected forms like '1..5'")    
-        
+            raise ArgumentTypeError("'" + string + "' is not a valid range. Expected forms like '1..5'")
+
         start = int(splitted[0])
         end = int(splitted[1])
 
         return splitted
     except ValueError:
-        raise ArgumentTypeError("Range values are not valid integers. Expected forms like '1..5'")            
+        raise ArgumentTypeError("Range values are not valid integers. Expected forms like '1..5'")
 
 # Main method
 def main():
@@ -165,7 +165,7 @@ def main():
                      commandline application made for displaying and
                      interacting with recent Reddit links. I DO NOT HAVE
                      ANY AFILIATION WITH REDDIT, I AM JUST A HACKER''')
-    
+
     parser.add_argument("-l", "--limit", type=int, default=10,
                         help='Limits output (default output is 10 links)')
     parser.add_argument("subreddit", default='front',
@@ -174,7 +174,7 @@ def main():
     parser.add_argument("-o", "--open", type=int,
                         help='Opens one link that matches the number '
                              'inputted. Chosen by number')
-    parser.add_argument("-or", "--openrange", type=parse_range, 
+    parser.add_argument("-or", "--openrange", type=parse_range,
                         help="Opens a range of links of the form 'x..y', "
                              "where 'x' and 'y' are chosen numbers")
     parser.add_argument("-s", "--self", action="store_true",
@@ -191,8 +191,8 @@ def main():
         parser.print_help()
         sys.exit(1)
 
-    # else, get the arguments    
-    args = parser.parse_args()    
+    # else, get the arguments
+    args = parser.parse_args()
 
     subm_gen = None
 
@@ -204,7 +204,7 @@ def main():
     if args.openrange:
         if args.open or args.random:
             print_warning("You cannot use [-or OPENRANGE] with [-o OPEN] or with [-r RANDOM]")
-            sys.exit(1)  
+            sys.exit(1)
         else:
             start = int(args.openrange[0])
             end = int(args.openrange[1])
@@ -220,10 +220,10 @@ def main():
             # Get the submissions for the subreddit
             submissions = get_submissions_from_subreddit(args.subreddit, args.limit)
 
-            print_colorized("Viewing a range of submissions\n")        
+            print_colorized("Viewing a range of submissions\n")
 
             for x in range(start, end):
-                # Chosen submission 
+                # Chosen submission
                 chosen = submissions[x - 1]
 
                 # Save the chosen submission
@@ -231,13 +231,13 @@ def main():
 
                 # Open the link
                 webbrowser.open(chosen.url)
-                
-    # Invalid case            
+
+    # Invalid case
     elif args.open and args.random:
         print_warning("You cannot use [-o OPEN] with [-r RANDOM]")
-        sys.exit(1)  
+        sys.exit(1)
 
-    # Open a certain submisison case    
+    # Open a certain submisison case
     elif args.open:
         try:
             # Get the submissions for the subreddit
@@ -255,7 +255,7 @@ def main():
                           " (try to pick a number between 1 and 10 or add"
                           " --limit {0})".format(e), "IndexError:", e)
 
-    # Random submission case        
+    # Random submission case
     elif args.random:
         if args.limit == 10:
             if args.subreddit == 'front':
@@ -268,7 +268,7 @@ def main():
                 submissions = submission_getter(top)
                 submissions.extend(submission_getter(new))
                 submissions.extend(submission_getter(hot))
-                
+
             try:
                 # Get a random submission
                 chosen = random.choice(submissions)
@@ -289,14 +289,14 @@ def main():
             print_warning("You cannot use [-l LIMIT] with [-r RANDOM] "
                           "(unless the limit is 10)")
             sys.exit(1)
-      
-    # Default case is listing Top 'limit' elements    
+
+    # Default case is listing Top 'limit' elements
     else:
         if args.subreddit == 'front':
-            submission_list = r.get_front_page(limit = args.limit)
+            submission_list = list(r.get_front_page(limit=args.limit))
             print_colorized('Top {0} front page links:'.format(args.limit))
         else:
-            submission_list = r.get_subreddit(args.subreddit).get_hot(limit = args.limit)
+            submission_list = list(r.get_subreddit(args.subreddit).get_hot(limit=args.limit))
             print_colorized('Top {0} /r/{1} links:'.format(args.limit, args.subreddit))
 
         try:
@@ -315,7 +315,7 @@ def main():
         for i, submission in enumerate(chosen_submissions):
             print color.OKGREEN, "[" + str(i) + "] -> ", color.OKBLUE, submission.selftext, color.ENDC
 
-    # Update AlienFeed case        
+    # Update AlienFeed case
     if args.update == True:
         try:
             print "Upgrading AlienFeed..."
