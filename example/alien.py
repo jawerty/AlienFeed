@@ -231,7 +231,7 @@ def main():
 
                 # Open the link
      		print(chosen.url)
-                #webbrowser.open(chosen.url)
+                webbrowser.open(chosen.url)
 
     # Invalid case
     elif args.open and args.random:
@@ -297,7 +297,7 @@ def main():
                           " (try to pick a number between 1 and 10 or add"
                           " --limit {0})".format(e), "IndexError:", e)
 
-    # Random submission case
+    # Random submission cases
     elif args.random:
         if args.limit == 10:
             if args.subreddit == 'front':
@@ -320,7 +320,7 @@ def main():
 
                 # Open the link
      		print(chosen.url)
-                #webbrowser.open( chosen.url )
+                webbrowser.open( chosen.url )
                 print_colorized("Viewing a random submission\n")
 
             except IndexError, e:
