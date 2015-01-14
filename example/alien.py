@@ -255,11 +255,13 @@ def main():
                 import urllib2
                 import os
                 import pyw3mimg
+                HOME = os.environ['HOME']
                 url = submissions[args.open - 1].url
 
                 file_name = url.split('/')[-1]
                 u = urllib2.urlopen(url)
-                f = open('tmp', 'wb')
+                os.system('mkdir $HOME/.alien')
+                f = open(HOME+'/.alien/tmpimg', 'wb')
                 meta = u.info()
                 file_size = int(meta.getheaders("Content-Length")[0])
                 print_colorized("Downloading: %s Bytes: %s" % (file_name, file_size))
@@ -279,14 +281,14 @@ def main():
                 f.close()
                 print '\n'
                 os.system('clear')
-                display = pyw3mimg.W3MImageDisplay('./img')
-                #print 'x: ', display.get_size('./tmp')[0], ' y: ', display.get_size('./tmp')[1]
-                if(display.get_size('./tmp')[0]<800 and display.get_size('./tmp')[1]<800):
-                    display.draw('./tmp', n=1, x=0, y=20)
+                #install is usually '/usr/lib/w3m/w3mimgdisplay'
+                display = pyw3mimg.W3MImageDisplay('/home/sam/Code/Projects/AlienFeed/example/img') #location of w3mimgdisplay
+                if(display.get_size(HOME +'/.alien/tmpimg')[0]<800 and display.get_size(HOME + '/.alien/tmpimg')[1]<800):
+                    display.draw(HOME +'/.alien/tmpimg', n=1, x=0, y=20)
                 else:
-                    display.draw('./tmp', n=1, x=0, y=20, w=500, h=500)
+                    display.draw(HOME + '/.alien/tmpimg', n=1, x=0, y=20, w=500, h=500)
                 raw_input()
-                os.system('rm tmp')
+                os.system('rm $HOME/.alien/tmpimg')
                 os.system('clear')
             else:
                 webbrowser.open(submissions[args.open - 1].url)
