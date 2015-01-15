@@ -182,6 +182,9 @@ def main():
     parser.add_argument("-r", "--random", action='store_true',
                         help='Opens a random link (must be the only '
                              'optional argument)')
+    parser.add_argument("-f", "--full", action='store_true',
+                        help='Opens image in current framebuffer in full size '
+                                'optional argument')
     parser.add_argument("-U", "--update", action='store_true',
                         help='Automatically updates AlienFeed via pip')
 
@@ -240,62 +243,71 @@ def main():
 
     # Open a certain submisison case
     elif args.open:
-        try:
-            # Get the submissions for the subreddit
+        if(args.self):
             submissions = get_submissions_from_subreddit(args.subreddit, args.limit)
-
-            print_colorized("Viewing a submission\n")
-
-            # Save chosen submission
             chosen_submissions.append(submissions[args.open - 1]);
+        else:
+            try:
+                # Get the submissions for the subreddit
+                submissions = get_submissions_from_subreddit(args.subreddit, args.limit)
 
-            # Open desired link
-            #print(submissions[args.open - 1].url)
-            if(submissions[args.open - 1].url.endswith('jpg') or submissions[args.open - 1].url.endswith('jpeg') or submissions[args.open - 1].url.endswith('png')):
-                import urllib2
-                import os
-                import pyw3mimg
-                HOME = os.environ['HOME']
-                url = submissions[args.open - 1].url
+                print_colorized("Viewing a submission\n")
 
-                file_name = url.split('/')[-1]
-                u = urllib2.urlopen(url)
-                os.system('mkdir $HOME/.alien')
-                f = open(HOME+'/.alien/tmpimg', 'wb')
-                meta = u.info()
-                file_size = int(meta.getheaders("Content-Length")[0])
-                print_colorized("Downloading: %s Bytes: %s" % (file_name, file_size))
+                # Save chosen submission
+                chosen_submissions.append(submissions[args.open - 1]);
 
-                file_size_dl = 0
-                block_sz = 8192
-                
-                while True:
-                    buffer = u.read(block_sz)
-                    if not buffer:
-                        break
-                    file_size_dl += len(buffer)
-                    f.write(buffer)
-                    status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
-                    status = status + chr(8)*(len(status)+1)
-                    print status,
-                f.close()
-                print '\n'
-                os.system('clear')
-                #install is usually '/usr/lib/w3m/w3mimgdisplay'
-                display = pyw3mimg.W3MImageDisplay('/home/sam/Code/Projects/AlienFeed/example/img') #location of w3mimgdisplay
-                if(display.get_size(HOME +'/.alien/tmpimg')[0]<800 and display.get_size(HOME + '/.alien/tmpimg')[1]<800):
-                    display.draw(HOME +'/.alien/tmpimg', n=1, x=0, y=20)
+                # Open desired link
+                #print(submissions[args.open - 1].url)
+                if(submissions[args.open - 1].url.endswith('jpg') or submissions[args.open - 1].url.endswith('jpeg') or submissions[args.open - 1].url.endswith('png')):
+                    import urllib2
+                    import os
+                    import pyw3mimg
+                    HOME = os.environ['HOME']
+                    url = submissions[args.open - 1].url
+
+                    file_name = url.split('/')[-1]
+                    u = urllib2.urlopen(url)
+                    if(os.path.isdir(HOME + '/.alien')==False):
+                        os.system('mkdir $HOME/.alien')
+                    f = open(HOME+'/.alien/tmpimg', 'wb')
+                    meta = u.info()
+                    file_size = int(meta.getheaders("Content-Length")[0])
+                    print_colorized("Downloading: %s Bytes: %s" % (file_name, file_size))
+
+                    file_size_dl = 0
+                    block_sz = 8192
+                    
+                    while True:
+                        buffer = u.read(block_sz)
+                        if not buffer:
+                            break
+                        file_size_dl += len(buffer)
+                        f.write(buffer)
+                        status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
+                        status = status + chr(8)*(len(status)+1)
+                        print status,
+                    f.close()
+                    print '\n'
+                    
+                    os.system('clear')
+
+                    #install is usually '/usr/lib/w3m/w3mimgdisplay'
+                    display = pyw3mimg.W3MImageDisplay('/usr/lib/w3m/w3mimgdisplay') #location of w3mimgdisplay
+                    if(args.full):
+                        display.draw(HOME +'/.alien/tmpimg', n=1, x=0, y=0)
+                    elif(display.get_size(HOME +'/.alien/tmpimg')[0]<800 and display.get_size(HOME + '/.alien/tmpimg')[1]<800):
+                        display.draw(HOME +'/.alien/tmpimg', n=1, x=0, y=0)
+                    else:
+                        display.draw(HOME + '/.alien/tmpimg', n=1, x=0, y=0, w=400, h=400)
+                    raw_input('\n  ')
+                    os.system('rm $HOME/.alien/tmpimg')
+                    os.system('clear')
                 else:
-                    display.draw(HOME + '/.alien/tmpimg', n=1, x=0, y=20, w=500, h=500)
-                raw_input()
-                os.system('rm $HOME/.alien/tmpimg')
-                os.system('clear')
-            else:
-                webbrowser.open(submissions[args.open - 1].url)
-        except IndexError, e:
-            print_warning("The number you typed in was out of the feed's range"
-                          " (try to pick a number between 1 and 10 or add"
-                          " --limit {0})".format(e), "IndexError:", e)
+                    webbrowser.open(submissions[args.open - 1].url)
+            except IndexError, e:
+                print_warning("The number you typed in was out of the feed's range"
+                              " (try to pick a number between 1 and 10 or add"
+                              " --limit {0})".format(e), "IndexError:", e)
 
     # Random submission cases
     elif args.random:
