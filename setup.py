@@ -3,8 +3,8 @@
 from setuptools import setup
 
 setup(name='AlienFeed',
-      version='0.1.3',
-      description='AlienFeed is a command line application made for displaying and interacting with Reddit submissions.',
+      version='0.3.1',
+      description='AlienFeed is a simple Reddit client for viewing and opening links from your console.',
       author='Jared Wright',
       license='MIT',
       keywords = "AlienFeed alien reddit feed rss tool cli",
@@ -16,5 +16,5 @@ setup(name='AlienFeed',
         'console_scripts': [
             'alienfeed = alien:main'
         ],
-	  }
-     )
+      }
+)

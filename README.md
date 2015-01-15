@@ -1,17 +1,28 @@
 # AlienFeed
-AlienFeed is a command line application made for displaying
-and interacting with Reddit submissions. You can return a list containing the top submissions in a subreddit, and even open the links up if you'd like. I do not have any affiliation with Reddit; I made this to be a fun utilization of the Reddit API.
+AlienFeed is a command line application made for displaying and interacting with Reddit submissions. The client can return a list containing the top submissions in a subreddit, and even open the links up if you'd like. I do not have any affiliation with Reddit; I made this to be a fun utilization of the Reddit API.
 
-When using this tool, understand that it utilizes the Reddit API with praw (Python Reddit API Wrapper) and has a limit on the amount of requests that are sent to the server. So if the applcation is taking a very long time or you cannot make a request is might not have to do with the application in itself, just the limited requests.
+=======
+
+Current version: 0.3.2
+
+### Contributors
+* [jawerty](http://github.com/jawerty)
+* [mreinhardt](http://github.com/mreinhardt)
+* [thekarangoel](http://github.com/thekarangoel)
+* [RaulLepsa](http://github.com/RaulLepsa)
 
 ## Install Instructions
-To download and install AlienFeed all you need to do is get a copy of this distribution
+To download and install AlienFeed, all you need to do is get a copy of this distribution with setup.py or install via pypi
 
 ### Install via PIP
-`$ pip install alienfeed`
+
+```
+$ pip install alienfeed
+```
 
 ###Install via setup.py 
 Download this zip or clone it to your local machine. Then run the following commands to install AlienFeed.
+
 ```
 $ cd /path/to/alienfeed
 $ python setup.py install
@@ -21,7 +32,6 @@ $ python setup.py install
 
 There are several different functions that are built into AlienFeed.
 See `$ alienfeed -h` for help.
-
 
 Here you can return a default list of the 10 top r/pics submissions.
 
@@ -72,17 +82,36 @@ $ alienfeed funny -o 11 -l 11
 ```
 
 The random function opens up a random link from the requested subreddit in a new browser tab (similar to the --open argument). Use the optional argument '-r or --random'. Example using the r/wtf subreddit.
+This command would of course open up the link in a new browser tab.
 
 ```
 $ alienfeed wtf -r
 ```
-This command would of course open up the link in a new browser tab.
 
+To open a range of submissions, you need to specify the `-or` (`--openrange`) argument, followed by a range in the form `x..y`. Every submission will open in a new browser tab. Similar to the `--open` argument, in order to open a range greater than 10, the `--limit` has to be specified.
+
+```
+$ alienfeed supershibe -or 1..5
+```
+
+In order to display the self-text of a post, the `-s` (or `--self`) argument has to be specified. It does not take any value, however. It works with any of the `--open`, `--random` or `--openrange` arguments, as well as for the default printing of the list.
+
+```
+$ alienfeed jokes -or 1..2 -s
+```
+
+To upgrade alienfeed via pip, you would need to call this argument, '-U'
+```
+$ alienfeed funny -U
+```
 
 ## Contact
 If you would like to contact me for further information on the project, see the info below.
 
 Email: jawerty210@gmail.com
+
 Github: jawerty
+
 Twitter: @jawerty
-Blog: <http://wrightdev.herokuapp.com>
+
+Blog: <http://jawerty.github.io>

@@ -34,3 +34,8 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+*.komodoproject
+.komodotools/
+
+.DS_Store
